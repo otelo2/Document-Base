@@ -16,14 +16,14 @@ import java.nio.charset.StandardCharsets;
 public class TestApp {
 
     //If the Application is run incorrectly (no input on console)
-    private static void usage()
+    private void usage()
     {
         //Print the correct usage format
         System.err.println("Usage: TestApp <algorithm> [<input file>] [-o <output file>]");
     }
 
     //If the Application is run correctly (input on console)
-    public static void main(String [] args) throws Throwable {
+    public void Lemmatization(String [] args) throws Throwable {
         //If there is not enough information (at least the information about language and input file)
         //There is no point in validating the strings
         if (args.length < 2) {
@@ -122,4 +122,5 @@ public class TestApp {
         //Empty Buffers
 	output.flush();
     }
+
 }
