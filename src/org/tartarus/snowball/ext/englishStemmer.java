@@ -215,6 +215,8 @@ private final static Among a_14[] = {
   //BE
   new Among("was", -1, 1),
   new Among("were", -1, 1),
+  new Among("are", -1, 1),
+  new Among("is", -1, 1),
   new Among("been", -1, 1),
   //BECOME
   new Among("became", -1, 2),
