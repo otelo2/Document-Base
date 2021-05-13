@@ -26,6 +26,7 @@ public class MainClass {
      */
     public static void main(String[] args) throws Throwable
     {
+        //1. Lemmatization of the documents
         readFile("1");
         readFile("2");
         readFile("3");
@@ -36,6 +37,18 @@ public class MainClass {
         readFile("8");
         readFile("9");
         readFile("10");*/
+        
+        //2. Count the frequency of the term in each outputX file
+        
+        //3. Matrix creation
+        
+        //4. Matrix transformation
+        
+        //5. Load the table to MySQL
+        
+        //6. Make the query
+        
+        
     }
     
 }
