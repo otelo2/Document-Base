@@ -347,7 +347,7 @@ public class SnowballProgram implements Serializable {
 	while ((i<j)&&(!flag))
         {           
             //System.out.println(k+"\t"+current.charAt(k)+"\t"+c+"\t"+v[i].s[c]);
-            while((current.charAt(k) == v[i].s[c]) && (c > 0) & (k>0))//< v[i].s.length-1) && (k < limit-1))
+            while((current.charAt(k) == v[i].s[c]) && (c > 0) && (k>0))//< v[i].s.length-1) && (k < limit-1))
             {
                 //System.out.println(current.charAt(k) + "\t\t" + v[i].s[c] + "\t"+ (limit-1)+"\t"+ (v[i].s.length-1) + "\t" + k);
                 k--;
