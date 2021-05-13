@@ -57,7 +57,7 @@ public class MainClass {
         query=query.concat("\" and d.title=\"");
         query=query.concat(title2);
         query=query.concat("\";");
-        System.out.println(query);
+        //System.out.println(query);
         QuerySQL q1 = new QuerySQL(query);
     }
     
@@ -80,7 +80,7 @@ public class MainClass {
         query=query.concat("\" and d.title=\"");
         query=query.concat(title2);
         query=query.concat("\";");
-        System.out.println(query);
+        //System.out.println(query);
         QuerySQL q1 = new QuerySQL(query);
     }
     
@@ -90,7 +90,7 @@ public class MainClass {
         temp1 = "SQRT(";
         temp2 = "SQRT(";
         //change the table names and attributes
-        query = "select ";
+        query = "select temporal.innp/(temporal.norm1*temporal.norm2) as cosine from (select ";
         for(int i=0; i<termno;i++)
         {
             temp = "(f.term"+(i+1)+"*d.term"+(i+1)+")";
@@ -108,14 +108,14 @@ public class MainClass {
         temp3 = temp1+temp2;
         query=query.concat(temp3);
         query = query.concat(temp);
-        query=query.concat(" as cosine from freqtt as f, freqtt as d ");
+        query=query.concat(" as innp from freqtt as f, freqtt as d ");
         query=query.concat("where f.title=\"");
         query=query.concat(title1);
         query=query.concat("\" and d.title=\"");
         query=query.concat(title2);
-        query=query.concat("\";");
-        System.out.println(query);
-        //QuerySQL q1 = new QuerySQL(query);
+        query=query.concat("\") as temporal;");
+        //System.out.println(query);
+        QuerySQL q1 = new QuerySQL(query);
     }
     
     public static void printMenu()
