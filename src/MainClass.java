@@ -13,6 +13,10 @@ import java.util.Scanner;
  */
 public class MainClass {
     
+    static int termno = 3;
+    static String query, temp = new String();
+    static String title1, title2 = new String();
+            
     public static void readFile(String file) throws Throwable
     {
         TestApp lemmatizer = new TestApp();
@@ -27,7 +31,94 @@ public class MainClass {
         System.out.println(filename+"\t\tDONE");
     }
     
-    public static int printMenu()
+    private static void EuclideanDistanceCompare() 
+    {
+        //Dissimilarity
+        /*
+        //create the string as a cycle
+        select SQRT(pow((f.term1-d.term1),2) + pow((f.term2-d.term2),2) + pow((f.term3-d.term3),2)) as dissimilarityDegree 
+        from freqtt as f, freqtt as d
+        where f.title="title1" and d.title="title3";
+        */
+        //change the table names and attributes
+        query = "select SQRT(";
+        for(int i=0; i<termno;i++)
+        {
+            temp = "pow((f.term"+(i+1)+"-d.term"+(i+1)+"),2)";
+            if(i!=termno-1)
+            {
+                temp = temp.concat(" + ");
+            }
+            query = query.concat(temp);
+        }
+        query=query.concat(") as dissimilarityDegree from freqtt as f, freqtt as d ");
+        query=query.concat("where f.title=\"");
+        query=query.concat(title1);
+        query=query.concat("\" and d.title=\"");
+        query=query.concat(title2);
+        query=query.concat("\";");
+        System.out.println(query);
+        QuerySQL q1 = new QuerySQL(query);
+    }
+    
+    private static void InnerProdCompare() 
+    {
+        //change the table names and attributes
+        query = "select ";
+        for(int i=0; i<termno;i++)
+        {
+            temp = "(f.term"+(i+1)+"*d.term"+(i+1)+")";
+            if(i!=termno-1)
+            {
+                temp = temp.concat(" + ");
+            }
+            query = query.concat(temp);
+        }
+        query=query.concat(" as similarityDegree from freqtt as f, freqtt as d ");
+        query=query.concat("where f.title=\"");
+        query=query.concat(title1);
+        query=query.concat("\" and d.title=\"");
+        query=query.concat(title2);
+        query=query.concat("\";");
+        System.out.println(query);
+        QuerySQL q1 = new QuerySQL(query);
+    }
+    
+    private static void CosineCompare() 
+    {
+        String temp1, temp2, temp3 = new String();
+        temp1 = "SQRT(";
+        temp2 = "SQRT(";
+        //change the table names and attributes
+        query = "select ";
+        for(int i=0; i<termno;i++)
+        {
+            temp = "(f.term"+(i+1)+"*d.term"+(i+1)+")";
+            temp1 = temp1.concat("(pow(f.term"+(i+1)+", 2))");
+            temp2 = temp2.concat("(pow(d.term"+(i+1)+", 2))");
+            if(i!=termno-1)
+            {
+                temp = temp.concat(" + ");
+                temp1 = temp1.concat(" + ");
+                temp2 = temp2.concat(" + ");
+            }
+        }
+        temp1 = temp1.concat(") as norm1,");
+        temp2 = temp2.concat(") as norm2, ");
+        temp3 = temp1+temp2;
+        query=query.concat(temp3);
+        query = query.concat(temp);
+        query=query.concat(" as cosine from freqtt as f, freqtt as d ");
+        query=query.concat("where f.title=\"");
+        query=query.concat(title1);
+        query=query.concat("\" and d.title=\"");
+        query=query.concat(title2);
+        query=query.concat("\";");
+        System.out.println(query);
+        //QuerySQL q1 = new QuerySQL(query);
+    }
+    
+    public static void printMenu()
     {
         Scanner in = new Scanner(System.in);
         int election = 0, election1 = 0;
@@ -38,26 +129,55 @@ public class MainClass {
             System.out.println("2. Give a query and retrieve the most relevant documents");
             System.out.println("3. EXIT");
             election1 = in.nextInt();
+            in.nextLine();
             do
             {
                 switch(election1)
                 {
                     case 1:
                         System.out.println();
-                        System.out.println("FIRST Choose a function to compare the documents:");
+                        /*
+                        termno = 3;
+                        title1 = "title1";
+                        title2 = "title3";
+                        */
+                        //Ask for the name of the documents
+                        //Show the information of the documents
+                        //select * from ;
+                        QuerySQL q1 = new QuerySQL("select * from documentInformation;");
+
+                        System.out.println("ID of the first document:");
+                        title1 = in.nextLine();
+                        System.out.println("ID of the second document:");
+                        title2 = in.nextLine();
+                        System.out.println();
+                        
+                        System.out.println("Choose a function to compare the documents:");
                         System.out.println("1. Euclidean Distance");
                         System.out.println("2. Inner Product");
                         System.out.println("3. Cosines");
-                        System.out.println("4. Abort operation");
+                        System.out.println("4. All of the above to compare");
+                        System.out.println("5. Abort operation");
                         election = in.nextInt();
+                        in.nextLine();
                         switch(election)
                         {
                             case 1:
+                                EuclideanDistanceCompare();
+                                election = election * 5;                                
+                                break;
                             case 2:
+                                InnerProdCompare();
+                                election = election * 5;
+                                break;                                
                             case 3:
+                                CosineCompare();
                                 election = election * 5;
                                 break;
-                            case 4: 
+                            case 4:
+                                election = election * 5;
+                                break;
+                            case 5: 
                                 election = 48;
                                 System.out.println("Okay, would you like to realize another operation? Here are the valid options");
                                 break;
@@ -69,16 +189,21 @@ public class MainClass {
                         break;
                     case 2:
                         System.out.println();
-                        System.out.println("FIRST Choose a function for the query:");
+                        System.out.println("Choose a function for the query:");
                         System.out.println("1. Euclidean Distance");
                         System.out.println("2. Inner Product");
                         System.out.println("3. Cosines");
                         System.out.println("4. Abort operation");
                         election = in.nextInt();
+                        in.nextLine();
                         switch(election)
                         {
                             case 1:
+                                election = election * 6;
+                                break;
                             case 2:
+                                election = election * 6;
+                                break;
                             case 3:
                                 election = election * 6;
                                 break;
@@ -104,7 +229,7 @@ public class MainClass {
         
         }while(election == 48);// || (election1 ==0));
         System.out.println(election);
-        return election;
+        //return election;
     }
     
     /**
@@ -112,10 +237,6 @@ public class MainClass {
      */
     public static void main(String[] args) throws Throwable
     {
-        String query, temp, title1, title2 = new String();
-        int termno = 0;
-        int mode = 0;
-        
         //1. Lemmatization of the documents
         System.out.println("Lemmatization");
         readFile("1");
@@ -160,12 +281,12 @@ public class MainClass {
         
         System.out.println("Load to MySQL");
         //5. Load the table to MySQL
-        
+   
         System.out.println();
         
         System.out.println("Query time");
         //PRINT THE MENU
-        mode = printMenu();
+        printMenu();
         
         //6. Make the query     
         //A. Using a query
@@ -182,33 +303,6 @@ public class MainClass {
         title1 = "title1";
         title2 = "title3";
         
-        //Dissimilarity
-        /*
-        //create the string as a cycle
-        select SQRT(pow((f.term1-d.term1),2) + pow((f.term2-d.term2),2) + pow((f.term3-d.term3),2)) as similarityDegree 
-        from freqtt as f, freqtt as d
-        where f.title="title1" and d.title="title3";
-        */
-        query = "select SQRT(";
-        for(int i=0; i<termno;i++)
-        {
-            temp = "pow((f.term"+(i+1)+"-d.term"+(i+1)+"),2)";
-            if(i!=termno-1)
-            {
-                temp = temp.concat(" + ");
-            }
-            query = query.concat(temp);
-        }
-        query=query.concat(" from freqtt as f, freqtt as d ");
-        query=query.concat("where f.title=\"");
-        query=query.concat(title1);
-        query=query.concat("\" and d.title=\"");
-        query=query.concat(title2);
-        query=query.concat("\";");
-        System.out.println(query);
-        //as similarityDegree 
-        //from freqtt as f, freqtt as d
-        //where f.title="title1" and d.title="title3";
     }
     
 }

@@ -18,7 +18,7 @@ solar
 thermal
 these
 problem
-are
+be
 current
 be
 address
@@ -51,7 +51,7 @@ altern
 energi
 sourc
 that
-are
+be
 competit
 with
 fossil
@@ -171,7 +171,7 @@ engin
 physicist
 mathematician
 who
-are
+be
 interest
 involv
 oper
