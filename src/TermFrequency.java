@@ -21,11 +21,12 @@ public class TermFrequency
     public static void calculateFrequency(String fileNum) throws FileNotFoundException, IOException
     {
         String line, word = "";    
-        int count = 0, maxCount = 0;    
+        int count = 0;
         ArrayList<String> words = new ArrayList<String>();    
             
         //Opens file in read mode    
-        filename="english "+fileNum+".txt -o output"+fileNum+".txt";
+        String filename="output"+fileNum+".txt";
+        System.out.println("Starting to read file: " + filename);
         FileReader file = new FileReader(filename);    
         BufferedReader br = new BufferedReader(file);    
             
@@ -37,20 +38,20 @@ public class TermFrequency
                 words.add(s);    
             }    
         }    
-            
+        
+        System.out.println("Size:" + words.size());
         //Determine the most repeated word in a file    
         for(int i = 0; i < words.size(); i++){    
             count = 1;    
             //Count each word in the file and store it in variable count    
             for(int j = i+1; j < words.size(); j++){    
                 if(words.get(i).equals(words.get(j))){    
-                    count++;    
+                    count++; 
+                    words.remove(j);
                 }     
             }    
-            System.out.println(word + " " + count);
+            System.out.println(words.get(i) + " " + count);
         }    
         br.close();    
     }
-    
-    
 }

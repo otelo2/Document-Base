@@ -39,7 +39,10 @@ public class MainClass {
         readFile("10");*/
         
         //2. Count the frequency of the term in each outputX file
-        
+        TermFrequency.calculateFrequency("1");
+        TermFrequency.calculateFrequency("2");
+        TermFrequency.calculateFrequency("3");
+
         //3. Matrix creation
         
         //4. Matrix transformation
