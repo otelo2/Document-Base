@@ -1,0 +1,11 @@
+create table documentInformation
+(
+id INTEGER NOT NULL,
+title VARCHAR(500) NOT NULL,
+author VARCHAR(100) NOT  NULL,
+year INTEGER,
+PRIMARY KEY(id)
+);
+insert into documentInformation values (01, "Renewable Energy : A Primer for the Twenty-First Century", "Bruce Usher", 2019);
+insert into documentInformation values (02, "Renewable Energy : Selected Issues", "Manuel Pérez Donsión, et. al.", 2016);
+insert into documentInformation values (03, "Renewable Energy : Trade and Investment in Essential Services", "Ebony L. Dunbar", 2014);
