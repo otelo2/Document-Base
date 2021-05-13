@@ -43,11 +43,14 @@ public class MainClass {
         //3. Matrix creation
         
         //4. Matrix transformation
+        LSI transformation;
+        transformation = new LSI();
+        //LSI.LSITransformation(test);
+        LSI.LSITransformation();
         
         //5. Load the table to MySQL
         
-        //6. Make the query
-        
+        //6. Make the query        
         
     }
     
