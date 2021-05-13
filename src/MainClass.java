@@ -5,6 +5,7 @@
  */
 
 import org.tartarus.snowball.*;
+import java.util.Scanner;
 
 /**
  *
@@ -18,15 +19,105 @@ public class MainClass {
         String filename = new String();
         String[] fileArray = null;
         filename="english "+file+".txt -o output"+file+".txt";
+
         fileArray = filename.split(" ");
+        
         lemmatizer.Lemmatization(fileArray);
+        
+        System.out.println(filename+"\t\tDONE");
     }
+    
+    public static int printMenu()
+    {
+        Scanner in = new Scanner(System.in);
+        int election = 0, election1 = 0;
+        do
+        {
+            System.out.println();
+            System.out.println("1. Compare to documents");
+            System.out.println("2. Give a query and retrieve the most relevant documents");
+            System.out.println("3. EXIT");
+            election1 = in.nextInt();
+            do
+            {
+                switch(election1)
+                {
+                    case 1:
+                        System.out.println();
+                        System.out.println("FIRST Choose a function to compare the documents:");
+                        System.out.println("1. Euclidean Distance");
+                        System.out.println("2. Inner Product");
+                        System.out.println("3. Cosines");
+                        System.out.println("4. Abort operation");
+                        election = in.nextInt();
+                        switch(election)
+                        {
+                            case 1:
+                            case 2:
+                            case 3:
+                                election = election * 5;
+                                break;
+                            case 4: 
+                                election = 48;
+                                System.out.println("Okay, would you like to realize another operation? Here are the valid options");
+                                break;
+                            default:
+                                election = 0;
+                                System.out.println("Oops, it was an invalid option. Try again, please!");
+                                break;
+                        }
+                        break;
+                    case 2:
+                        System.out.println();
+                        System.out.println("FIRST Choose a function for the query:");
+                        System.out.println("1. Euclidean Distance");
+                        System.out.println("2. Inner Product");
+                        System.out.println("3. Cosines");
+                        System.out.println("4. Abort operation");
+                        election = in.nextInt();
+                        switch(election)
+                        {
+                            case 1:
+                            case 2:
+                            case 3:
+                                election = election * 6;
+                                break;
+                            case 4: 
+                                election = 48;
+                                break;
+                            default:
+                                election = 0;
+                                System.out.println("Oops, it was an invalid option. Try again, please!");
+                                break;
+                        }
+                        break;
+                    case 3:
+                        election = 58;
+                        break;
+                    default:
+                        election = 48;
+                        System.out.println("Oops, it was an invalid option. Try again, please!");
+                        break;
+                }
+                //System.out.println("election1"+election1+"\t election"+election);
+            }while ((election == 0) && (election != 58) && (election != 48));
+        
+        }while(election == 48);// || (election1 ==0));
+        System.out.println(election);
+        return election;
+    }
+    
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Throwable
     {
+        String query, temp, title1, title2 = new String();
+        int termno = 0;
+        int mode = 0;
+        
         //1. Lemmatization of the documents
+        System.out.println("Lemmatization");
         readFile("1");
         readFile("2");
         readFile("3");
@@ -37,7 +128,9 @@ public class MainClass {
         readFile("8");
         readFile("9");
         readFile("10");*/
+        System.out.println();
         
+        System.out.println("Count Frequency");
         //2. Count the frequency of the term in each outputX file
         TermFrequency.calculateFrequency("1");
         TermFrequency.calculateFrequency("2");
@@ -49,19 +142,73 @@ public class MainClass {
         TermFrequency.calculateFrequency("8");
         TermFrequency.calculateFrequency("9");
         TermFrequency.calculateFrequency("10");*/
+        System.out.println();
         
+        System.out.println("Matrix Creation");
         //3. Matrix creation
         
+        System.out.println();
+        
+        System.out.println("Matrix Transformation");
         //4. Matrix transformation
         LSI transformation;
         transformation = new LSI();
         //LSI.LSITransformation(test);
         LSI.LSITransformation();
         
+        System.out.println();
+        
+        System.out.println("Load to MySQL");
         //5. Load the table to MySQL
         
-        //6. Make the query        
+        System.out.println();
         
+        System.out.println("Query time");
+        //PRINT THE MENU
+        mode = printMenu();
+        
+        //6. Make the query     
+        //A. Using a query
+        //Euclidean distance
+        //Dissimilarity
+        /*select title, 
+        SQRT(pow((f.term1-q.term1),2) + pow((f.term2-q.term2),2) + pow((f.term3-q.term3),2)) as euc 
+        from freqtt as f, query as q
+        order by euc;*/
+        //Similarity
+        
+        //B. Compare two documents.
+        termno = 3;
+        title1 = "title1";
+        title2 = "title3";
+        
+        //Dissimilarity
+        /*
+        //create the string as a cycle
+        select SQRT(pow((f.term1-d.term1),2) + pow((f.term2-d.term2),2) + pow((f.term3-d.term3),2)) as similarityDegree 
+        from freqtt as f, freqtt as d
+        where f.title="title1" and d.title="title3";
+        */
+        query = "select SQRT(";
+        for(int i=0; i<termno;i++)
+        {
+            temp = "pow((f.term"+(i+1)+"-d.term"+(i+1)+"),2)";
+            if(i!=termno-1)
+            {
+                temp = temp.concat(" + ");
+            }
+            query = query.concat(temp);
+        }
+        query=query.concat(" from freqtt as f, freqtt as d ");
+        query=query.concat("where f.title=\"");
+        query=query.concat(title1);
+        query=query.concat("\" and d.title=\"");
+        query=query.concat(title2);
+        query=query.concat("\";");
+        System.out.println(query);
+        //as similarityDegree 
+        //from freqtt as f, freqtt as d
+        //where f.title="title1" and d.title="title3";
     }
     
 }

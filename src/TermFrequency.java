@@ -39,7 +39,7 @@ public class TermFrequency
             }    
         }    
         
-        System.out.println("Size:" + words.size());
+        //System.out.println("Size:" + words.size());
         //Determine the most repeated word in a file    
         for(int i = 0; i < words.size(); i++){    
             count = 1;    
@@ -50,8 +50,10 @@ public class TermFrequency
                     words.remove(j);
                 }     
             }    
-            System.out.println(words.get(i) + " " + count);
+            //System.out.println(words.get(i) + " " + count);
         }    
         br.close();    
+        System.out.println(filename+"\t\tDONE");
     }
+    
 }
