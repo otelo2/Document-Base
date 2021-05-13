@@ -66,7 +66,7 @@ public class TestApp {
                 return;
             }
             //If there is a name, use that one as the output file name
-	    outstream = new FileOutputStream(args[arg + 1], true);
+	    outstream = new FileOutputStream(args[arg + 1]);
 	} 
         //To print the string on console (?)
         else {
