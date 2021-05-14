@@ -120,7 +120,7 @@ public class MatrixCreator {
         } 
         
         //The rows that the final frequency matrix must have
-        int finalRows = rows - index.size()/3;
+        int finalRows = rows - index.size()/4;
         //Create the variable for the final frequency matrix
         double[][] finalFreqT = new double[finalRows][numOfFiles];
         

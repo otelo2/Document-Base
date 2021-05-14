@@ -60,23 +60,24 @@ public class MainClass {
         where f.title="title1" and d.title="title3";
         */
         //change the table names and attributes
-        query = "select SQRT(";
+        /*query = "select SQRT(";
         for(int i=0; i<termno;i++)
         {
-            temp = "pow((f.term"+(i+1)+"-d.term"+(i+1)+"),2)";
+            temp = "pow((f.termno-d.termno)),2)";
             if(i!=termno-1)
             {
                 temp = temp.concat(" + ");
             }
             query = query.concat(temp);
         }
-        query=query.concat(") as dissimilarityDegree from freqtt as f, freqtt as d ");
-        query=query.concat("where f.title=\"");
+        query=query.concat(") as dissimilarityDegree from ft as f, ft as d ");
+        query=query.concat("where f.doc_id=\"");
         query=query.concat(title1);
-        query=query.concat("\" and d.title=\"");
+        query=query.concat("\" and d.doc_id=\"");
         query=query.concat(title2);
-        query=query.concat("\";");
+        query=query.concat("\";");*/
         //System.out.println(query);
+        query = "select SQRT(SUM(pow((ABS(f.FREQ)-ABS(d.FREQ)),2))) as dissimilarityDegree from ft as f, ft as d where f.doc_id="+title1+ " and d.doc_id="+ title2+" and f.termno=d.termno;";        
         System.out.println("\nEuclidean distance between "+title1+" and "+title2+":");
         QuerySQL q1 = new QuerySQL(query);
     }
@@ -84,7 +85,7 @@ public class MainClass {
     private static void InnerProdCompare() 
     {
         //change the table names and attributes
-        query = "select ";
+        /*query = "select ";
         for(int i=0; i<termno;i++)
         {
             temp = "(f.term"+(i+1)+"*d.term"+(i+1)+")";
@@ -100,14 +101,15 @@ public class MainClass {
         query=query.concat("\" and d.title=\"");
         query=query.concat(title2);
         query=query.concat("\";");
-        //System.out.println(query);
+        //System.out.println(query);*/
+        query = "select SUM((ABS(f.FREQ)*ABS(d.FREQ))) as innerprod from ft as f, ft as d where f.doc_id="+title1+ " and d.doc_id="+ title2+" and f.termno=d.termno;";            
         System.out.println("Internal product between "+title1+" and "+title2+":");
         QuerySQL q1 = new QuerySQL(query);
     }
     
     private static void CosineCompare() 
     {
-        String temp1, temp2, temp3 = new String();
+        /*String temp1, temp2, temp3 = new String();
         temp1 = "SQRT(";
         temp2 = "SQRT(";
         //change the table names and attributes
@@ -135,8 +137,9 @@ public class MainClass {
         query=query.concat(title1);
         query=query.concat("\" and d.title=\"");
         query=query.concat(title2);
-        query=query.concat("\") as temporal;");
+        query=query.concat("\") as temporal;");*/
         //System.out.println(query);
+        query="select SUM((ABS(f.FREQ)*ABS(d.FREQ)))/(sqrt(SUM(POW(f.FREQ, 2)))*SQRT(SUM(POW(d.freq, 2)))) as COSINE from ft as f, ft as d where f.doc_id="+title1+ " and d.doc_id="+ title2+" and f.termno=d.termno;";
         System.out.println("Cosine between "+title1+" and "+title2+":");
         QuerySQL q1 = new QuerySQL(query);
     }
@@ -419,8 +422,9 @@ public class MainClass {
         
         //5. Load the table to MySQL
         System.out.println("Load to MySQL");
-        loadMatrix(LSI.MatrixSD, "matrixSD", LSI.kvalue, LSI.ColumnDimension);
-        loadMatrix(LSI.MatrixT, "matrixT", LSI.RowDimension, LSI.kvalue );
+        //loadMatrix(LSI.MatrixSD, "matrixSD", LSI.kvalue, LSI.ColumnDimension);
+        //loadMatrix(LSI.MatrixT, "matrixT", LSI.RowDimension, LSI.kvalue );
+        createFreqTView();
         termno=LSI.number;
    
         System.out.println();
@@ -429,7 +433,7 @@ public class MainClass {
         //PRINT THE MENU
         printMenu();
         
-        truncateTables();
+        //truncateTables();
         
     }
 
@@ -437,13 +441,13 @@ public class MainClass {
     {
         SQLStatement q1;
         query="";
-        query = "insert into "+table+" values(0,0,"+Matrix[0][0]+")";
+        query = "insert into "+table+" values(1,1,"+Matrix[0][0]+")";
         q1 = new SQLStatement(query);
         for(int i=0; i<row;i++)
         {
             for(int j=0;j<column;j++)
             {
-                query = "insert into "+table+" values("+i+","+j+","+Matrix[i][j]+")";
+                query = "insert into "+table+" values("+(i+1)+","+(j+1)+","+Matrix[i][j]+")";
                 if((i==0)&&(j==0))
                 {
                 }
@@ -464,7 +468,17 @@ public class MainClass {
         SQLStatement q1 = new SQLStatement(query);
         query="TRUNCATE TABLE matrixT;";
         q1.SQLState(query);
+        query="DROP VIEW FT;";
+        q1.SQLState(query);
         q1.SQLStatementClose();        
+    }
+
+    private static void createFreqTView() throws SQLException
+    {
+        query = "CREATE VIEW FT AS SELECT SD.j as doc_id, T.i as termno, SUM(SD.element_value * T.element_value) as freq FROM MatrixSD as SD, MatrixT as T WHERE SD.k = T.j GROUP BY SD.j, i ORDER BY doc_id";
+        SQLStatement q1 = new SQLStatement(query);
+        q1.SQLStatementClose();
+        System.out.println("VIEW has been created.");
     }
     
 }
