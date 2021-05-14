@@ -207,6 +207,7 @@ public class MainClass {
                         switch(election)
                         {
                             case 1:
+                                //TRUNCATE TABLE query;
                                 election = election * 6;
                                 break;
                             case 2:
@@ -255,11 +256,11 @@ public class MainClass {
         readFile("1");
         readFile("2");
         readFile("3");
-        /*readFile("4");
+        readFile("4");
         readFile("5");
         readFile("6");
         readFile("7");
-        readFile("8");
+        /*readFile("8");
         readFile("9");
         readFile("10");*/
         System.out.println();
@@ -269,11 +270,11 @@ public class MainClass {
         TermFrequency.calculateFrequency("1");
         TermFrequency.calculateFrequency("2");
         TermFrequency.calculateFrequency("3");
-        /*TermFrequency.calculateFrequency("4");
+        TermFrequency.calculateFrequency("4");
         TermFrequency.calculateFrequency("5");
         TermFrequency.calculateFrequency("6");
         TermFrequency.calculateFrequency("7");
-        TermFrequency.calculateFrequency("8");
+        /*TermFrequency.calculateFrequency("8");
         TermFrequency.calculateFrequency("9");
         TermFrequency.calculateFrequency("10");*/
         System.out.println();
