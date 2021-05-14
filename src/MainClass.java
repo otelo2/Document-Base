@@ -417,11 +417,11 @@ public class MainClass {
         
         System.out.println();
         
+        //5. Load the table to MySQL
         System.out.println("Load to MySQL");
         loadMatrix(LSI.MatrixSD, "matrixSD", LSI.kvalue, LSI.ColumnDimension);
         loadMatrix(LSI.MatrixT, "matrixT", LSI.RowDimension, LSI.kvalue );
         termno=LSI.number;
-        //5. Load the table to MySQL
    
         System.out.println();
         
