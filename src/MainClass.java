@@ -51,12 +51,13 @@ public class MainClass {
         TermFrequency.calculateFrequency("10");*/
 
         //3. Matrix creation
+        double[][] matrix = MatrixCreator.createMatrix(3); //Argument is the amount of files we have
         
         //4. Matrix transformation
         LSI transformation;
         transformation = new LSI();
         //LSI.LSITransformation(test);
-        LSI.LSITransformation();
+        LSI.LSITransformation(matrix);
         
         //5. Load the table to MySQL
         

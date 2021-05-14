@@ -1,7 +1,13 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 /*
@@ -16,6 +22,10 @@ import java.util.ArrayList;
  */
 public class TermFrequency 
 {
+    //Create variables for the array lists
+    ArrayList<String> terms = new ArrayList<String>();
+    ArrayList<Double> frequency = new ArrayList<Double>();
+    
     //Creates a frequency matrix out of the terms in the file.
     //TODO: Change the void into the correct type
     public static void calculateFrequency(String fileNum) throws FileNotFoundException, IOException
@@ -28,7 +38,19 @@ public class TermFrequency
         String filename="output"+fileNum+".txt";
         System.out.println("Starting to read file: " + filename);
         FileReader file = new FileReader(filename);    
-        BufferedReader br = new BufferedReader(file);    
+        BufferedReader br = new BufferedReader(file);
+                
+        //For the output of the terms
+        OutputStream outstream;
+        outstream = new FileOutputStream("terms"+fileNum);
+        Writer outputT = new OutputStreamWriter(outstream, StandardCharsets.UTF_8);
+	outputT = new BufferedWriter(outputT);
+        
+        //For the output of the terms frequency
+        OutputStream outstream1;
+        outstream1 = new FileOutputStream("freq"+fileNum);
+        Writer outputF = new OutputStreamWriter(outstream1, StandardCharsets.UTF_8);
+	outputF = new BufferedWriter(outputF);
             
         //Reads each line    
         while((line = br.readLine()) != null) {    
@@ -49,9 +71,18 @@ public class TermFrequency
                     count++; 
                     words.remove(j);
                 }     
-            }    
-            System.out.println(words.get(i) + " " + count);
+            }
+            //Build the frequency result for the current word
+            String result = words.get(i) + " " + Integer.toString(count);
+            System.out.println(result);
+            //Write que frequency column to a file
+            outputT.write(words.get(i));
+            outputT.write("\n");
+            outputF.write(Integer.toString(count));
+            outputF.write("\n");
         }    
-        br.close();    
+        br.close();
+        outputT.flush();
+        outputF.flush();
     }
 }

@@ -154,7 +154,7 @@ public class LSI {
         System.out.println();
     }
     
-    public static void LSITransformation()//double test[][]) 
+    public static void LSITransformation(double test[][])//double test[][]) 
         {
         int k, r;
         
@@ -193,7 +193,7 @@ public class LSI {
         //----      RANDOM MATRIX
         //ERROR: [m][n] m<n por la definición de la función SVD
         //[documentos][terminos]
-        double[][] test = new double[10][8];
+        //double[][] test = new double[10][8];
         test = randomMatrix(test);
         Matrix C = new Matrix(test);
         System.out.println("Original Matrix");
