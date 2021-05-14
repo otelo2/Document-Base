@@ -7,6 +7,7 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import org.tartarus.snowball.*;
 import java.util.Scanner;
 
@@ -17,7 +18,7 @@ import java.util.Scanner;
 public class MainClass {
     
     //CHANGE THE term number!!
-    static int termno = 3;
+    static int termno = 0;
     static String query, temp = new String();
     static String title1, title2 = new String();
     static String terms = new String();
@@ -417,6 +418,9 @@ public class MainClass {
         System.out.println();
         
         System.out.println("Load to MySQL");
+        loadMatrix(LSI.MatrixSD, "matrixSD", LSI.kvalue, LSI.ColumnDimension);
+        loadMatrix(LSI.MatrixT, "matrixT", LSI.RowDimension, LSI.kvalue );
+        termno=LSI.number;
         //5. Load the table to MySQL
    
         System.out.println();
@@ -425,6 +429,42 @@ public class MainClass {
         //PRINT THE MENU
         printMenu();
         
+        truncateTables();
+        
+    }
+
+    private static void loadMatrix(double[][] Matrix, String table, int row, int column) throws SQLException 
+    {
+        SQLStatement q1;
+        query="";
+        query = "insert into "+table+" values(0,0,"+Matrix[0][0]+")";
+        q1 = new SQLStatement(query);
+        for(int i=0; i<row;i++)
+        {
+            for(int j=0;j<column;j++)
+            {
+                query = "insert into "+table+" values("+i+","+j+","+Matrix[i][j]+")";
+                if((i==0)&&(j==0))
+                {
+                }
+                else 
+                {
+                    q1.SQLState(query);
+                }
+            }
+            //q1.commit();
+        }
+        q1.SQLStatementClose();
+        System.out.println(table+" has been loaded.");
+    }
+
+    private static void truncateTables() throws SQLException
+    {
+        query="TRUNCATE TABLE matrixSD;";
+        SQLStatement q1 = new SQLStatement(query);
+        query="TRUNCATE TABLE matrixT;";
+        q1.SQLState(query);
+        q1.SQLStatementClose();        
     }
     
 }

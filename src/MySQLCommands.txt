@@ -13,3 +13,9 @@ insert into documentInformation values (04, "STUDY ON THE ESTIMATION OF WIND ENE
 insert into documentInformation values (05, "The Effect of Renewable Energy Policies on Renewable Energy Production", "Yoon Won Song", 2011);
 insert into documentInformation values (06, "Renewable Energies: The Role of Regulatory Institutions to Promote the Use of Alternative Sources.", "Rodríguez Borda", 2019);
 insert into documentInformation values (07, "Energy from biomass: alternative for the reduction of atmospheric emissions.", "John Freddy Galvis Martinez, et. al.", 2020);
+
+create table MatrixSD(k INTEGER NOT NULL, j INTEGER NOT NULL, element_value FLOAT NOT NULL, PRIMARY KEY(k,j));
+
+create table MatrixT(i INTEGER NOT NULL, j INTEGER NOT NULL, element_value FLOAT NOT NULL, PRIMARY KEY(i,j));
+
+SELECT SD.j as doc_id, T.i as termno, SUM(SD.element_value * T.element_value) as freq FROM MatrixSD as SD, MatrixT as T WHERE SD.k = T.j GROUP BY SD.j, i ORDER BY doc_id;

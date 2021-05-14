@@ -12,7 +12,8 @@ import java.util.Arrays;
  */
 public class LSI {
     
-    public static int number=0;
+    public static int number=0, ColumnDimension, RowDimension, kvalue;
+    public static double[][] MatrixSD, MatrixT;
     
     //https://www.researchgate.net/publication/228930026_Finding_the_Optimal_Rank_for_LSI_Models
     public static int findCriticalK(double s[][])
@@ -78,7 +79,7 @@ public class LSI {
         System.out.println();
     }
     
-    public static double[][] LSITransformation(double test[][]) 
+    public static void LSITransformation(double test[][]) 
         {
         int k, r;
         
@@ -148,6 +149,8 @@ public class LSI {
         double[][] T = new double[C.getRowDimension()][k];
         T= cut(E, C.getRowDimension(), k);
         printMatrix(T);
+        MatrixT=T;
+        RowDimension=C.getRowDimension();
         System.out.println("S*");     
         double[][] S = new double[k][k];                  
         S=cut(D, k, k);
@@ -155,9 +158,14 @@ public class LSI {
         System.out.println("D\u1d40*"); //unicode for the T superscript
         double[][] D1 = new double[k][C.getColumnDimension()];
         D1=cut(F, k, C.getColumnDimension());
+        ColumnDimension=C.getColumnDimension();
+        kvalue=k;
         printMatrix(D1);//*/
-        double [][] t1 = ordermulMatrix(ordermulMatrix(T, S, C.getRowDimension(), k, k), D1, C.getRowDimension(), k, C.getColumnDimension());
+        double [][] t1 = ordermulMatrix(S, D1, k, k, number=C.getColumnDimension());
+        printMatrix(ordermulMatrix(ordermulMatrix(T, S, C.getRowDimension(), k, k), D1, C.getRowDimension(), k, C.getColumnDimension()));
         printMatrix(t1);
+        MatrixSD=t1;
+        
         //Multiply Matrices to get FreqT*
         
         
@@ -171,7 +179,7 @@ public class LSI {
         
         printMatrix(nRelevant(3, cut(E, k, r), q));*/
         //System.out.println(nRelevant(3, cut(F, k, r), q).length);
-        return t1;
+
     }
 
     public static void BubbleSort(double[][] similarity) 
