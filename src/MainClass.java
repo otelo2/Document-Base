@@ -13,6 +13,7 @@ import java.util.Scanner;
  */
 public class MainClass {
     
+    //CHANGE THE term number!!
     static int termno = 3;
     static String query, temp = new String();
     static String title1, title2 = new String();
@@ -58,6 +59,7 @@ public class MainClass {
         query=query.concat(title2);
         query=query.concat("\";");
         //System.out.println(query);
+        System.out.println("\nEuclidean distance between "+title1+" and "+title2+":");
         QuerySQL q1 = new QuerySQL(query);
     }
     
@@ -81,6 +83,7 @@ public class MainClass {
         query=query.concat(title2);
         query=query.concat("\";");
         //System.out.println(query);
+        System.out.println("Internal product between "+title1+" and "+title2+":");
         QuerySQL q1 = new QuerySQL(query);
     }
     
@@ -115,7 +118,15 @@ public class MainClass {
         query=query.concat(title2);
         query=query.concat("\") as temporal;");
         //System.out.println(query);
+        System.out.println("Cosine between "+title1+" and "+title2+":");
         QuerySQL q1 = new QuerySQL(query);
+    }
+    
+    private static void MixedCompare() 
+    {
+        EuclideanDistanceCompare();
+        InnerProdCompare();
+        CosineCompare();
     }
     
     public static void printMenu()
@@ -136,14 +147,10 @@ public class MainClass {
                 {
                     case 1:
                         System.out.println();
-                        /*
-                        termno = 3;
-                        title1 = "title1";
-                        title2 = "title3";
-                        */
+                        
                         //Ask for the name of the documents
                         //Show the information of the documents
-                        //select * from ;
+                        System.out.println("Here is the information of the documents, use it to make your comparisson!");
                         QuerySQL q1 = new QuerySQL("select * from documentInformation;");
 
                         System.out.println("ID of the first document:");
@@ -175,6 +182,7 @@ public class MainClass {
                                 election = election * 5;
                                 break;
                             case 4:
+                                MixedCompare();
                                 election = election * 5;
                                 break;
                             case 5: 
@@ -224,8 +232,13 @@ public class MainClass {
                         System.out.println("Oops, it was an invalid option. Try again, please!");
                         break;
                 }
+                if((election!=58)&&(election!=48)&&(election!=0))
+                {
+                    System.out.println("SUCCESS! Let's get to a new comparisson");                            
+                    System.out.println("If you want to get out, leave the titles on blank and enter 5 after the menu.");                            
+                }
                 //System.out.println("election1"+election1+"\t election"+election);
-            }while ((election == 0) && (election != 58) && (election != 48));
+            }while ((election != 58) && (election != 48));
         
         }while(election == 48);// || (election1 ==0));
         System.out.println(election);
