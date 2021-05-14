@@ -94,9 +94,10 @@ public class MainClass {
         temp2 = "SQRT(";
         //change the table names and attributes
         query = "select temporal.innp/(temporal.norm1*temporal.norm2) as cosine from (select ";
+        temp = "";
         for(int i=0; i<termno;i++)
         {
-            temp = "(f.term"+(i+1)+"*d.term"+(i+1)+")";
+            temp = temp.concat("(f.term"+(i+1)+"*d.term"+(i+1)+")");
             temp1 = temp1.concat("(pow(f.term"+(i+1)+", 2))");
             temp2 = temp2.concat("(pow(d.term"+(i+1)+", 2))");
             if(i!=termno-1)
@@ -129,10 +130,99 @@ public class MainClass {
         CosineCompare();
     }
     
+    private static void EuclideanDistanceMatch(int limit) 
+    {
+        //Dissimilarity
+        /*select title, 
+        SQRT(pow((f.term1-q.term1),2) + pow((f.term2-q.term2),2) + pow((f.term3-q.term3),2)) as euc 
+        from freqtt as f, query as q
+        order by euc;*/
+        
+        //change the table names and attributes
+        query = "select title, SQRT(";
+        for(int i=0; i<termno;i++)
+        {
+            temp = "pow((f.term"+(i+1)+"-q.term"+(i+1)+"),2)";
+            if(i!=termno-1)
+            {
+                temp = temp.concat(" + ");
+            }
+            query = query.concat(temp);
+        }
+        query=query.concat(") as euc from freqtt as f, query as q order by euc ASC limit "+limit+";");
+        //System.out.println(query);
+        
+        QuerySQL q1 = new QuerySQL(query);
+        //TRUNCATE TABLE query;
+        query="TRUNCATE TABLE query;";
+        //QuerySQL q2 = new QuerySQL(query);
+    }
+    
+    private static void InnerProdMatch(int limit) 
+    {
+        //Similarity
+                
+        //change the table names and attributes
+        query = "select title, ";
+        for(int i=0; i<termno;i++)
+        {
+            temp = "(f.term"+(i+1)+"*q.term"+(i+1)+")";
+            if(i!=termno-1)
+            {
+                temp = temp.concat(" + ");
+            }
+            query = query.concat(temp);
+        }
+        query=query.concat(" as innp from freqtt as f, query as q order by innp DESC limit "+limit+";");
+        //System.out.println(query);
+        
+        QuerySQL q1 = new QuerySQL(query);
+        //TRUNCATE TABLE query;
+        query="TRUNCATE TABLE query;";
+        //QuerySQL q2 = new QuerySQL(query);
+    }
+    
+    private static void CosineMatch(int limit) 
+    {
+        //Similarity
+                
+        //change the table names and attributes
+        String temp1, temp2, temp3 = new String();
+        temp1 = "SQRT(";
+        temp2 = "SQRT(";
+        //change the table names and attributes
+        query = "select temporal.title as title, temporal.innp/(temporal.norm1*temporal.norm2) as cosine from (select f.title, ";
+        temp = "";
+        for(int i=0; i<termno;i++)
+        {
+            temp = temp.concat("(f.term"+(i+1)+"*q.term"+(i+1)+")");
+            temp1 = temp1.concat("(pow(f.term"+(i+1)+", 2))");
+            temp2 = temp2.concat("(pow(q.term"+(i+1)+", 2))");
+            if(i!=termno-1)
+            {
+                temp = temp.concat(" + ");
+                temp1 = temp1.concat(" + ");
+                temp2 = temp2.concat(" + ");
+                System.out.println(temp);
+            }
+        }
+        temp1 = temp1.concat(") as norm1,");
+        temp2 = temp2.concat(") as norm2, ");
+        temp3 = temp1+temp2;
+        query=query.concat(temp3);
+        query = query.concat(temp);
+        query=query.concat(" as innp from freqtt as f, query as q) as temporal order by cosine DESC LIMIT "+limit+";");
+        System.out.println(query);
+        QuerySQL q1 = new QuerySQL(query);
+        //TRUNCATE TABLE query;
+        query="TRUNCATE TABLE query;";
+        //QuerySQL q2 = new QuerySQL(query);
+    }
+    
     public static void printMenu()
     {
         Scanner in = new Scanner(System.in);
-        int election = 0, election1 = 0;
+        int election = 0, election1 = 0, limit;
         do
         {
             System.out.println();
@@ -196,7 +286,11 @@ public class MainClass {
                         }
                         break;
                     case 2:
-                        System.out.println();
+                        System.out.println("What are the IMPORTANT terms?");
+                        //ask terms
+                        System.out.println("How many matches do you want?");
+                        limit = in.nextInt();
+                        
                         System.out.println("Choose a function for the query:");
                         System.out.println("1. Euclidean Distance");
                         System.out.println("2. Inner Product");
@@ -204,16 +298,23 @@ public class MainClass {
                         System.out.println("4. Abort operation");
                         election = in.nextInt();
                         in.nextLine();
+                        if(limit>10)
+                            limit = 10;
+                        else if(limit<0)
+                            limit =1;                                
+
                         switch(election)
                         {
                             case 1:
-                                //TRUNCATE TABLE query;
+                                EuclideanDistanceMatch(limit);
                                 election = election * 6;
                                 break;
                             case 2:
+                                InnerProdMatch(limit);
                                 election = election * 6;
                                 break;
                             case 3:
+                                CosineMatch(limit);
                                 election = election * 6;
                                 break;
                             case 4: 
@@ -236,7 +337,7 @@ public class MainClass {
                 if((election!=58)&&(election!=48)&&(election!=0))
                 {
                     System.out.println("SUCCESS! Let's get to a new comparisson");                            
-                    System.out.println("If you want to get out, leave the titles on blank and enter 5 after the menu.");                            
+                    System.out.println("If you want to get out, leave the next inputs blank and enter the number to 'Abort operation' after the menu.\n");
                 }
                 //System.out.println("election1"+election1+"\t election"+election);
             }while ((election != 58) && (election != 48));
@@ -301,21 +402,6 @@ public class MainClass {
         System.out.println("Query time");
         //PRINT THE MENU
         printMenu();
-        
-        //6. Make the query     
-        //A. Using a query
-        //Euclidean distance
-        //Dissimilarity
-        /*select title, 
-        SQRT(pow((f.term1-q.term1),2) + pow((f.term2-q.term2),2) + pow((f.term3-q.term3),2)) as euc 
-        from freqtt as f, query as q
-        order by euc;*/
-        //Similarity
-        
-        //B. Compare two documents.
-        termno = 3;
-        title1 = "title1";
-        title2 = "title3";
         
     }
     
