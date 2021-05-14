@@ -154,7 +154,7 @@ public class LSI {
         System.out.println();
     }
     
-    public static void LSITransformation()//double test[][]) 
+    public static void LSITransformation(double test[][]) 
         {
         int k, r;
         
@@ -193,8 +193,8 @@ public class LSI {
         //----      RANDOM MATRIX
         //ERROR: [m][n] m<n por la definición de la función SVD
         //[documentos][terminos]
-        double[][] test = new double[10][8];
-        test = randomMatrix(test);
+        //double[][] test = new double[10][8];
+        //test = randomMatrix(test);
         Matrix C = new Matrix(test);
         System.out.println("Original Matrix");
         printMatrix(C.getArrayCopy());
@@ -230,12 +230,12 @@ public class LSI {
         double[][] q = {{5.0}, {6.0}, {0.0}, {8.0}, {1.0}, {2.0}, {0.0}, {0.0}};
         //printMatrix(nRelevant(3, C.getArrayCopy() , q));
         
-        Matrix query = new Matrix(q);
+        /*Matrix query = new Matrix(q);
         q = query.svd().getU().getArrayCopy();
         printMatrix(q);
         printMatrix(q=cut(query.svd().getU(), k, r));
         
-        printMatrix(nRelevant(3, cut(E, k, r), q));
+        printMatrix(nRelevant(3, cut(E, k, r), q));*/
         //System.out.println(nRelevant(3, cut(F, k, r), q).length);
     }
 

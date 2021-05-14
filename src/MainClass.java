@@ -404,7 +404,7 @@ public class MainClass {
         
         System.out.println("Matrix Creation");
         //3. Matrix creation
-        
+        double[][] matrix = MatrixCreator.createMatrix(7); //Argument is the amount of files we have        
         System.out.println();
         
         System.out.println("Matrix Transformation");
@@ -412,7 +412,7 @@ public class MainClass {
         LSI transformation;
         transformation = new LSI();
         //LSI.LSITransformation(test);
-        LSI.LSITransformation();
+        LSI.LSITransformation(matrix);
         
         System.out.println();
         
