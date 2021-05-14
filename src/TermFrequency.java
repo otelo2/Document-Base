@@ -36,7 +36,7 @@ public class TermFrequency
             
         //Opens file in read mode    
         String filename="output"+fileNum+".txt";
-        System.out.println("Starting to read file: " + filename);
+        System.out.print("Starting to read file: " + filename);
         FileReader file = new FileReader(filename);    
         BufferedReader br = new BufferedReader(file);
                 
@@ -61,7 +61,7 @@ public class TermFrequency
             }    
         }    
         
-        System.out.println("Size:" + words.size());
+        System.out.println("\tSize:" + words.size());
         //Determine the most repeated word in a file    
         for(int i = 0; i < words.size(); i++){    
             count = 1;    
@@ -74,7 +74,7 @@ public class TermFrequency
             }
             //Build the frequency result for the current word
             String result = words.get(i) + " " + Integer.toString(count);
-            System.out.println(result);
+            //System.out.println(result);
             //Write que frequency column to a file
             outputT.write(words.get(i));
             outputT.write("\n");

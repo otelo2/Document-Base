@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * TODO: Print the final term list
  */
 public class MatrixCreator {
+    
     public static double[][] createMatrix(int numOfFiles) throws FileNotFoundException, IOException
     {
         //Dynamic arrays
@@ -108,7 +109,7 @@ public class MatrixCreator {
                         index.add(Integer.toString(fileNum-1));
                         //3.Get the frequency. k+2
                         index.add(frequency.get(j));
-                        //System.out.println("Frequency of word " + words.get(i) + " in document " + fileNum + " is " + frequency.get(j) + " with i as: "+ i +" and j as: "+ j);
+                        System.out.println("Frequency of word " + words.get(i) + " in document " + fileNum + " is " + frequency.get(j) + " with i as: "+ i +" and j as: "+ j);
                         //Remove duplicate word from list
                         words.remove(j);
                         frequency.remove(j);
@@ -119,7 +120,7 @@ public class MatrixCreator {
         } 
         
         //The rows that the final frequency matrix must have
-        int finalRows = rows - index.size()/3;
+        int finalRows = rows - index.size()/4;
         //Create the variable for the final frequency matrix
         double[][] finalFreqT = new double[finalRows][numOfFiles];
         
@@ -168,6 +169,7 @@ public class MatrixCreator {
             
             //Opens terms file in read mode    
             String filename="terms"+fileNum;
+            //System.out.println(filename);
             FileReader fileTerms = new FileReader(filename);    
             BufferedReader brTerms = new BufferedReader(fileTerms);
             

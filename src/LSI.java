@@ -12,50 +12,8 @@ import java.util.Arrays;
  */
 public class LSI {
     
-    //Diferencia entre ambos documentos
-    public static double euclidean(double a[], double b[])
-    {
-        double similarity = 0.0;
-        //System.out.println(a.length+"\t"+b.length);
-        if(a.length==b.length)
-        {
-            for(int i=0; i<a.length-1;i++)
-            {
-                similarity = similarity + ((a[i]-b[i])*(a[i]-b[i]));
-            }
-        }
-        else
-        {
-            similarity = 0;
-        }
-        similarity = Math.sqrt(similarity);
-        return similarity;
-    }
-    
-    public static double[][] nRelevant(int n, double freqt[][], double q[][])
-    {
-        double[][] relevant = new double[n][2];
-        double[][] similarity = new double[freqt[0].length][2];
-        double [] query = new double[freqt[0].length];
-        for(int i=0;i<freqt[0].length-1;i++)
-        {
-            query[i] = q[i][0];
-        }
-        for(int j=0; j<freqt[0].length;j++)
-        {
-            //puede estar tomando mal la sección de la matriz
-            similarity[j][0] = j;
-            similarity[j][1] = euclidean(freqt[j], query);
-        }
-        printMatrix(similarity);
-        BubbleSort(similarity);
-        for (int i = 0; i < n; i++)
-        {
-            relevant[i][0] = similarity[i][0];
-            relevant[i][1] = similarity[i][1];
-        }
-        return relevant;
-    }
+    public static int number=0, ColumnDimension, RowDimension, kvalue;
+    public static double[][] MatrixSD, MatrixT;
     
     //https://www.researchgate.net/publication/228930026_Finding_the_Optimal_Rank_for_LSI_Models
     public static int findCriticalK(double s[][])
@@ -76,76 +34,43 @@ public class LSI {
         return s.length-1;
     }
     
+    public static double[][] ordermulMatrix(double[][] A, double[][] B, int row1, int column1, int column2)
+    {
+        double[][] C = new double[row1][column2];
+        for(int i=0; i<row1;i++)
+        {
+            for(int j=0;j<column2;j++)
+            {
+                for(int k=0;k<column1;k++)
+                {
+                    C[i][j]=C[i][j]+(A[i][k]*B[k][j]);
+                }
+            }
+        }
+        return C;
+    }
+    
     public static double[][] cut(Matrix matrix, int k, int r)
     {
         
         double cMatrix[][], aMatrix[][];
         aMatrix = matrix.getArrayCopy();
-        if((matrix.getColumnDimension()==r)&&(matrix.getRowDimension()==r))
+        cMatrix = new double[k][r];
+        for(int i=0; i<k; i++)
         {
-            //column [k][k]
-            cMatrix = new double[k][k];
-            for(int i=0; i<k; i++)
+            for(int j=0; j<r ; j++)
             {
-                for(int j=0; j<k ; j++)
-                {
-                    cMatrix[i][j] = aMatrix[i][j];
-                }
-            }
-            return cMatrix;
-        }
-        else if((matrix.getColumnDimension()==r)&&(matrix.getRowDimension()!=r))
-        {
-            //column [][k]
-            cMatrix = new double[matrix.getRowDimension()][k];
-            for(int i=0; i<matrix.getRowDimension(); i++)
-            {
-                for(int j=0; j<k ; j++)
-                {
-                    cMatrix[i][j] = aMatrix[i][j];
-                }
-            }
-            return cMatrix;
-        }
-        else if((matrix.getColumnDimension()!=r)&&(matrix.getRowDimension()==r))
-        {
-            //row [k][]
-            cMatrix = new double[k][matrix.getColumnDimension()];
-            for(int i=0; i<k; i++)
-            {
-                for(int j=0; j<matrix.getColumnDimension(); j++)
-                {
-                    cMatrix[i][j] = aMatrix[i][j];
-                }
-            }
-            return cMatrix;
-        }
-        else
-            return null;
-    }
-    
-    public static double[][] randomMatrix(double matriz[][])
-    {
-        //to generate an sparse matrix
-        for (int x=0; x < matriz.length; x++) 
-        {
-            for (int y=0; y < matriz[x].length; y++)
-            {
-                if(((Math.random()*100+1)) > 50)
-                    matriz[x][y] = (int) (Math.random()*50+1);
-                else
-                    matriz[x][y] = 0;
+                cMatrix[i][j] = aMatrix[i][j];
             }
         }
-        return matriz;
+        return cMatrix;
     }
 
     public static void printMatrix(double a[][])
     {
-        System.out.println();
         for(int i=0; i<a.length; i++)
         {
-            for(int j=0;j<a[i].length;j++)
+            for(int j=0;j<a[0].length;j++)
             {
                 System.out.printf("%2.2f\t", a[i][j]);
             }
@@ -154,7 +79,7 @@ public class LSI {
         System.out.println();
     }
     
-    public static void LSITransformation(double test[][])//double test[][]) 
+    public static void LSITransformation(double test[][]) 
         {
         int k, r;
         
@@ -194,7 +119,7 @@ public class LSI {
         //ERROR: [m][n] m<n por la definición de la función SVD
         //[documentos][terminos]
         //double[][] test = new double[10][8];
-        test = randomMatrix(test);
+        //test = randomMatrix(test);
         Matrix C = new Matrix(test);
         System.out.println("Original Matrix");
         printMatrix(C.getArrayCopy());
@@ -220,23 +145,41 @@ public class LSI {
         System.out.println("Critical k="+k);
         
         //Cut a Matrix
-        System.out.println("T*");        
-        printMatrix(cut(E, k, r));
-        System.out.println("S*");       
-        printMatrix(cut(D, k, r));
+        System.out.println("T*");
+        double[][] T = new double[C.getRowDimension()][k];
+        T= cut(E, C.getRowDimension(), k);
+        printMatrix(T);
+        MatrixT=T;
+        RowDimension=C.getRowDimension();
+        System.out.println("S*");     
+        double[][] S = new double[k][k];                  
+        S=cut(D, k, k);
+        printMatrix(S);
         System.out.println("D\u1d40*"); //unicode for the T superscript
-        printMatrix(cut(F, k, r));//*/
+        double[][] D1 = new double[k][C.getColumnDimension()];
+        D1=cut(F, k, C.getColumnDimension());
+        ColumnDimension=C.getColumnDimension();
+        kvalue=k;
+        printMatrix(D1);//*/
+        double [][] t1 = ordermulMatrix(S, D1, k, k, number=C.getColumnDimension());
+        printMatrix(ordermulMatrix(ordermulMatrix(T, S, C.getRowDimension(), k, k), D1, C.getRowDimension(), k, C.getColumnDimension()));
+        printMatrix(t1);
+        MatrixSD=t1;
+        
+        //Multiply Matrices to get FreqT*
+        
         
         double[][] q = {{5.0}, {6.0}, {0.0}, {8.0}, {1.0}, {2.0}, {0.0}, {0.0}};
         //printMatrix(nRelevant(3, C.getArrayCopy() , q));
         
-        Matrix query = new Matrix(q);
+        /*Matrix query = new Matrix(q);
         q = query.svd().getU().getArrayCopy();
         printMatrix(q);
         printMatrix(q=cut(query.svd().getU(), k, r));
         
-        printMatrix(nRelevant(3, cut(E, k, r), q));
+        printMatrix(nRelevant(3, cut(E, k, r), q));*/
         //System.out.println(nRelevant(3, cut(F, k, r), q).length);
+
     }
 
     public static void BubbleSort(double[][] similarity) 
