@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import org.tartarus.snowball.*;
 import java.util.Scanner;
 
@@ -17,6 +20,7 @@ public class MainClass {
     static int termno = 3;
     static String query, temp = new String();
     static String title1, title2 = new String();
+    static String terms = new String();
             
     public static void readFile(String file) throws Throwable
     {
@@ -31,6 +35,19 @@ public class MainClass {
         
         System.out.println(filename+"\t\tDONE");
     }
+    
+    private static void ConstructTerms(String terms) throws IOException, Throwable
+    {
+        File output = new File("query.txt");
+        FileWriter writer = new FileWriter(output);
+
+        writer.write(terms);
+        writer.flush();
+        writer.close();
+        
+        readFile("query");
+    }
+    
     
     private static void EuclideanDistanceCompare() 
     {
@@ -219,7 +236,7 @@ public class MainClass {
         //QuerySQL q2 = new QuerySQL(query);
     }
     
-    public static void printMenu()
+    public static void printMenu() throws IOException, Throwable
     {
         Scanner in = new Scanner(System.in);
         int election = 0, election1 = 0, limit;
@@ -288,8 +305,13 @@ public class MainClass {
                     case 2:
                         System.out.println("What are the IMPORTANT terms?");
                         //ask terms
+                        terms = in.nextLine();
+                        ConstructTerms(terms);
+                        //System.out.println(terms);                                                
+                        
                         System.out.println("How many matches do you want?");
                         limit = in.nextInt();
+                        in.nextLine();
                         
                         System.out.println("Choose a function for the query:");
                         System.out.println("1. Euclidean Distance");
@@ -343,7 +365,7 @@ public class MainClass {
             }while ((election != 58) && (election != 48));
         
         }while(election == 48);// || (election1 ==0));
-        System.out.println(election);
+        //System.out.println(election);
         //return election;
     }
     
