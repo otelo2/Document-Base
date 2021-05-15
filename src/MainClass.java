@@ -4,10 +4,13 @@
  * and open the template in the editor.
  */
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import org.tartarus.snowball.*;
 import java.util.Scanner;
 
@@ -18,10 +21,13 @@ import java.util.Scanner;
 public class MainClass {
     
     //CHANGE THE term number!!
-    static int termno = 0;
+    static int termno = 0, documents=7, k_value;
     static String query, temp = new String();
     static String title1, title2 = new String();
     static String terms = new String();
+    static double[][] matrix;
+    static double[][] matrixT1;
+    static double[] qt;
             
     public static void readFile(String file) throws Throwable
     {
@@ -39,14 +45,69 @@ public class MainClass {
     
     private static void ConstructTerms(String terms) throws IOException, Throwable
     {
+        //Query file processing
         File output = new File("query.txt");
         FileWriter writer = new FileWriter(output);
-
         writer.write(terms);
         writer.flush();
         writer.close();
-        
         readFile("query");
+        
+        String line1, line2;
+        int counter = 1;
+        //Read terms list
+        String filename="outputquery.txt";
+        FileReader file1 = new FileReader(filename);    
+        BufferedReader br1 = new BufferedReader(file1);
+        filename="FrequencyMatrix.txt";
+        FileReader file2 = new FileReader(filename);    
+        BufferedReader br2 = new BufferedReader(file2);
+        filename="FrequencyMatrix.txt";
+        ArrayList<String> words1 = new ArrayList<String>();        
+        ArrayList<String> words2 = new ArrayList<String>();        
+        while((line1 = br1.readLine()) != null) {    
+            String string[] = line1.toLowerCase().split("\n");    
+            //Adding all words generated in previous step into words    
+            for(String s : string){    
+                words1.add(s);    
+            }    
+        } 
+        while((line2 = br2.readLine()) != null) {    
+            String string[] = line2.toLowerCase().split("\n");    
+            //Adding all words generated in previous step into words    
+            for(String s : string){    
+                words2.add(s);    
+            }    
+        }
+        double max = 0;
+        int place;
+        qt = new double[termno];
+        for(int i=0; i<termno;i++)
+        {
+            qt[i]=0;
+        }
+        for(int i = 0; i < words1.size(); i++){
+            counter=1;
+            for(int j = 0; j < words2.size(); j++){    
+                if(words1.get(i).equals(words2.get(j)))
+                {
+                    place=0;
+                    for(int k=0;k<documents;k++)
+                    {
+                        if(matrix[counter-1][k]>max)
+                        {
+                            max=matrix[counter-1][k];
+                            place = k;
+                        }
+                    }
+                    qt[counter-1] = matrixT1[counter-1][place];
+                    System.out.println(max);
+                }
+                counter++;
+            }
+        }
+        //LSI.LSITransformation(qt, k_value);
+        loadMatrix(qt, "query", termno);
     }
     
     
@@ -160,7 +221,7 @@ public class MainClass {
         order by euc;*/
         
         //change the table names and attributes
-        query = "select title, SQRT(";
+        /*query = "select title, SQRT(";
         for(int i=0; i<termno;i++)
         {
             temp = "pow((f.term"+(i+1)+"-q.term"+(i+1)+"),2)";
@@ -170,13 +231,11 @@ public class MainClass {
             }
             query = query.concat(temp);
         }
-        query=query.concat(") as euc from freqtt as f, query as q order by euc ASC limit "+limit+";");
+        query=query.concat(") as euc from freqtt as f, query as q order by euc ASC limit "+limit+";");*/
+        query = "select f.doc_id as doc_id, d.title as title, SQRT(SUM(pow((ABS(f.FREQ)-ABS(q.value)),2))) as euc from ft as f, documentInformation as d, query as q where f.doc_id=d.id and f.termno=q.termno group by doc_id, title order by euc ASC limit "+limit+";";
         //System.out.println(query);
         
-        QuerySQL q1 = new QuerySQL(query);
-        //TRUNCATE TABLE query;
-        query="TRUNCATE TABLE query;";
-        //QuerySQL q2 = new QuerySQL(query);
+        QuerySQL q1 = new QuerySQL(query);        
     }
     
     private static void InnerProdMatch(int limit) 
@@ -184,7 +243,7 @@ public class MainClass {
         //Similarity
                 
         //change the table names and attributes
-        query = "select title, ";
+        /*query = "select title, ";
         for(int i=0; i<termno;i++)
         {
             temp = "(f.term"+(i+1)+"*q.term"+(i+1)+")";
@@ -194,13 +253,11 @@ public class MainClass {
             }
             query = query.concat(temp);
         }
-        query=query.concat(" as innp from freqtt as f, query as q order by innp DESC limit "+limit+";");
+        query=query.concat(" as innp from freqtt as f, query as q order by innp DESC limit "+limit+";");*/
         //System.out.println(query);
+        query = "select f.doc_id as doc_id, d.title as title, SUM((ABS(f.FREQ)*ABS(q.value))) as innerprod from ft as f, documentInformation as d, query as q where f.doc_id=d.id and f.termno=q.termno group by doc_id, title order by innerprod ASC limit "+limit+";";
         
         QuerySQL q1 = new QuerySQL(query);
-        //TRUNCATE TABLE query;
-        query="TRUNCATE TABLE query;";
-        //QuerySQL q2 = new QuerySQL(query);
     }
     
     private static void CosineMatch(int limit) 
@@ -208,7 +265,7 @@ public class MainClass {
         //Similarity
                 
         //change the table names and attributes
-        String temp1, temp2, temp3 = new String();
+        /*String temp1, temp2, temp3 = new String();
         temp1 = "SQRT(";
         temp2 = "SQRT(";
         //change the table names and attributes
@@ -233,11 +290,9 @@ public class MainClass {
         query=query.concat(temp3);
         query = query.concat(temp);
         query=query.concat(" as innp from freqtt as f, query as q) as temporal order by cosine DESC LIMIT "+limit+";");
-        System.out.println(query);
+        System.out.println(query);*/
+        query = "select f.doc_id as doc_id, d.title as title, SUM((ABS(f.FREQ)*ABS(q.value)))/(sqrt(SUM(POW(f.FREQ, 2)))*SQRT(SUM(POW(q.value, 2)))) as COSINE from ft as f, documentInformation as d, query as q where f.doc_id=d.id and q.termno = f.termno group by f.doc_id order by cosine ASC limit "+limit+";";        
         QuerySQL q1 = new QuerySQL(query);
-        //TRUNCATE TABLE query;
-        query="TRUNCATE TABLE query;";
-        //QuerySQL q2 = new QuerySQL(query);
     }
     
     public static void printMenu() throws IOException, Throwable
@@ -343,7 +398,7 @@ public class MainClass {
                                 CosineMatch(limit);
                                 election = election * 6;
                                 break;
-                            case 4: 
+                            case 4:                               
                                 election = 48;
                                 break;
                             default:
@@ -360,6 +415,10 @@ public class MainClass {
                         System.out.println("Oops, it was an invalid option. Try again, please!");
                         break;
                 }
+                //TRUNCATE TABLE query;
+                query="TRUNCATE TABLE query;";
+                SQLStatement q2 = new SQLStatement(query);
+                q2.SQLStatementClose();
                 if((election!=58)&&(election!=48)&&(election!=0))
                 {
                     System.out.println("SUCCESS! Let's get to a new comparisson");                            
@@ -408,7 +467,7 @@ public class MainClass {
         
         System.out.println("Matrix Creation");
         //3. Matrix creation
-        double[][] matrix = MatrixCreator.createMatrix(7); //Argument is the amount of files we have        
+        matrix = MatrixCreator.createMatrix(documents); //Argument is the amount of files we have        
         System.out.println();
         
         System.out.println("Matrix Transformation");
@@ -422,10 +481,12 @@ public class MainClass {
         
         //5. Load the table to MySQL
         System.out.println("Load to MySQL");
+        k_value=LSI.kvalue;
         //loadMatrix(LSI.MatrixSD, "matrixSD", LSI.kvalue, LSI.ColumnDimension);
         //loadMatrix(LSI.MatrixT, "matrixT", LSI.RowDimension, LSI.kvalue );
+        matrixT1 = LSI.MatrixT1;
         createFreqTView();
-        termno=LSI.number;
+        termno=LSI.RowDimension;
    
         System.out.println();
         
@@ -458,6 +519,28 @@ public class MainClass {
             }
             //q1.commit();
         }
+        q1.SQLStatementClose();
+        System.out.println(table+" has been loaded.");
+    }
+    
+    private static void loadMatrix(double[] Matrix, String table, int column) throws SQLException 
+    {
+        SQLStatement q1;
+        query="";
+        query = "insert into "+table+" values(1,"+Matrix[0]+")";
+        q1 = new SQLStatement(query);
+        for(int i=0; i<column;i++)
+        {
+            query = "insert into "+table+" values("+(i+1)+","+Matrix[i]+")";
+            if(i==0)
+            {
+            }
+            else
+            {
+                q1.SQLState(query);
+            }
+        }
+        //q1.commit();
         q1.SQLStatementClose();
         System.out.println(table+" has been loaded.");
     }

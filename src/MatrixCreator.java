@@ -22,14 +22,13 @@ import java.util.ArrayList;
  * TODO: Print the final term list
  */
 public class MatrixCreator {
+    //Dynamic arrays
+    public static ArrayList<String> words = new ArrayList<>();
+    public static ArrayList<String> frequency = new ArrayList<>();
+    public static ArrayList<String> index = new ArrayList<>();
     
     public static double[][] createMatrix(int numOfFiles) throws FileNotFoundException, IOException
-    {
-        //Dynamic arrays
-        ArrayList<String> words = new ArrayList<String>();
-        ArrayList<String> frequency = new ArrayList<String>();
-        ArrayList<String> index = new ArrayList<String>();
-        
+    {        
         //Creation of the frequency matrix
         int rows = getRows(numOfFiles);
         double[][] tempFreqT = new double[rows][numOfFiles];
@@ -209,17 +208,13 @@ public class MatrixCreator {
         
         if(toFile)
         {
-            output.write("\n");
-            for(int i=0; i<freqT.length; i++)
+            char c;
+            for(int i=0; i<words.size(); i++)
             {
                 output.write(words.get(i));
-                for(int j=0;j<freqT[i].length;j++)
-                {
-                    output.write(String.valueOf(freqT[i][j]));
-                }
-                System.out.println();
+		output.write("\n");
             }
-            output.write("\n");
+            
         }
         
         output.flush();

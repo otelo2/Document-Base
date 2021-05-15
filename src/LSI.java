@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class LSI {
     
     public static int number=0, ColumnDimension, RowDimension, kvalue;
-    public static double[][] MatrixSD, MatrixT;
+    public static double[][] MatrixSD, MatrixT, MatrixT1;
     
     //https://www.researchgate.net/publication/228930026_Finding_the_Optimal_Rank_for_LSI_Models
     public static int findCriticalK(double s[][])
@@ -162,23 +162,11 @@ public class LSI {
         kvalue=k;
         printMatrix(D1);//*/
         double [][] t1 = ordermulMatrix(S, D1, k, k, number=C.getColumnDimension());
-        printMatrix(ordermulMatrix(ordermulMatrix(T, S, C.getRowDimension(), k, k), D1, C.getRowDimension(), k, C.getColumnDimension()));
+        printMatrix(MatrixT1= ordermulMatrix(ordermulMatrix(T, S, C.getRowDimension(), k, k), D1, C.getRowDimension(), k, C.getColumnDimension()));
         printMatrix(t1);
         MatrixSD=t1;
         
         //Multiply Matrices to get FreqT*
-        
-        
-        double[][] q = {{5.0}, {6.0}, {0.0}, {8.0}, {1.0}, {2.0}, {0.0}, {0.0}};
-        //printMatrix(nRelevant(3, C.getArrayCopy() , q));
-        
-        /*Matrix query = new Matrix(q);
-        q = query.svd().getU().getArrayCopy();
-        printMatrix(q);
-        printMatrix(q=cut(query.svd().getU(), k, r));
-        
-        printMatrix(nRelevant(3, cut(E, k, r), q));*/
-        //System.out.println(nRelevant(3, cut(F, k, r), q).length);
 
     }
 
@@ -203,4 +191,20 @@ public class LSI {
             }
         }
     }
+
+    /*static void LSITransformation(double[] qt, int k) {
+        double[][] q;
+        //printMatrix(nRelevant(3, C.getArrayCopy() , q));
+        q= new double[1][qt.length];
+        for(int i=0;i<qt.length;i++)
+        {
+            q[1][i]=qt[i];
+        }
+        Matrix query = new Matrix(q);
+        q = query.svd().getU().getArrayCopy();
+        printMatrix(q);
+        printMatrix(q=cut(query.svd().getU(), k, r));
+        
+        //System.out.println(nRelevant(3, cut(F, k, r), q).length); 
+    }*/
 }
