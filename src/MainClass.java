@@ -21,7 +21,7 @@ import java.util.Scanner;
 public class MainClass {
     
     //CHANGE THE term number!!
-    static int termno = 0, documents=7, k_value;
+    static int termno = 0, documents=10, k_value;
     static String query, temp = new String();
     static String title1, title2 = new String();
     static String terms = new String();
@@ -302,6 +302,8 @@ public class MainClass {
         do
         {
             System.out.println();
+            System.out.println("Database general information");
+            QuerySQL q5 = new QuerySQL("select * from documentInformation;");            
             System.out.println("1. Compare to documents");
             System.out.println("2. Give a query and retrieve the most relevant documents");
             System.out.println("3. EXIT");
@@ -446,9 +448,9 @@ public class MainClass {
         readFile("5");
         readFile("6");
         readFile("7");
-        /*readFile("8");
+        readFile("8");
         readFile("9");
-        readFile("10");*/
+        readFile("10");
         System.out.println();
         
         System.out.println("Count Frequency");
@@ -460,9 +462,9 @@ public class MainClass {
         TermFrequency.calculateFrequency("5");
         TermFrequency.calculateFrequency("6");
         TermFrequency.calculateFrequency("7");
-        /*TermFrequency.calculateFrequency("8");
+        TermFrequency.calculateFrequency("8");
         TermFrequency.calculateFrequency("9");
-        TermFrequency.calculateFrequency("10");*/
+        TermFrequency.calculateFrequency("10");
         System.out.println();
         
         System.out.println("Matrix Creation");
@@ -482,10 +484,11 @@ public class MainClass {
         //5. Load the table to MySQL
         System.out.println("Load to MySQL");
         k_value=LSI.kvalue;
+        //LOAD ONLY THE FIRST TIME and AFTER USING THE SQLInstructions file
         //loadMatrix(LSI.MatrixSD, "matrixSD", LSI.kvalue, LSI.ColumnDimension);
         //loadMatrix(LSI.MatrixT, "matrixT", LSI.RowDimension, LSI.kvalue );
         matrixT1 = LSI.MatrixT1;
-        createFreqTView();
+        //createFreqTView();
         termno=LSI.RowDimension;
    
         System.out.println();

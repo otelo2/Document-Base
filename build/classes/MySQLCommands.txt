@@ -13,3 +13,38 @@ insert into documentInformation values (04, "STUDY ON THE ESTIMATION OF WIND ENE
 insert into documentInformation values (05, "The Effect of Renewable Energy Policies on Renewable Energy Production", "Yoon Won Song", 2011);
 insert into documentInformation values (06, "Renewable Energies: The Role of Regulatory Institutions to Promote the Use of Alternative Sources.", "Rodríguez Borda", 2019);
 insert into documentInformation values (07, "Energy from biomass: alternative for the reduction of atmospheric emissions.", "John Freddy Galvis Martinez, et. al.", 2020);
+
+create table MatrixSD(k INTEGER NOT NULL, j INTEGER NOT NULL, element_value FLOAT NOT NULL, PRIMARY KEY(k,j));
+
+create table MatrixT(i INTEGER NOT NULL, j INTEGER NOT NULL, element_value FLOAT NOT NULL, PRIMARY KEY(i,j));
+
+SELECT SD.j as doc_id, T.i as termno, SUM(SD.element_value * T.element_value) as freq FROM MatrixSD as SD, MatrixT as T WHERE SD.k = T.j GROUP BY SD.j, i ORDER BY doc_id;
+
+SELECT * FROM FT AS F1, FT AS F2 WHERE F1.doc_id=0 and F2. doc_id!=0 and F1.termno=F2.termno ORDER BY F2.doc_id;
+
+
+select d.termno, ABS(F.FREQ), ABS(D.FREQ), pow((ABS(f.FREQ)-ABS(d.FREQ)),2) as dissimilarityDegree 
+from ft as f, ft as d
+where f.doc_id=3 and d.doc_id=5 and f.termno=d.termno;
+
+select SQRT(SUM(pow((ABS(f.FREQ)-ABS(d.FREQ)),2
+))) as dissimilarityDegree 
+from ft as f, ft as d
+where f.doc_id=3 and d.doc_id=5 and f.termno=d.termno;
+
+select SQRT(SUM(pow((ABS(f.FREQ)-ABS(d.FREQ)),2
+))) as dissimilarityDegree 
+from ft as f, ft as d
+where f.doc_id=3 and d.doc_id=3 and f.termno=d.termno;
+
+select SUM((ABS(f.FREQ)*ABS(d.FREQ))) as innerprod from ft as f, ft as d
+where f.doc_id=3 and d.doc_id=3 and f.termno=d.termno;
+
+select SUM((ABS(f.FREQ)*ABS(d.FREQ))) as innerprod, SUM(POW(f.FREQ, 2)) as norm1, SUM(POW(d.freq, 2)) as norm2 from ft as f, ft as d
+where f.doc_id=3 and d.doc_id=3 and f.termno=d.termno;
+
+
+select SUM((ABS(f.FREQ)*ABS(d.FREQ)))/(sqrt(SUM(POW(f.FREQ, 2)))*SQRT(SUM(POW(d.freq, 2)))) as COSINE from ft as f, ft as d
+where f.doc_id=3 and d.doc_id=5 and f.termno=d.termno;
+
+create table query(termno INTEGER NOT NULL, value FLOAT);
